@@ -1,2 +1,5 @@
 [build]
-  functions = "bin"
+    command = "make build"
+    functions = "bin"
+[build.environment]
+    GO_IMPORT_PATH = "https://github.com/mvcatsifma/poc-serverless"
