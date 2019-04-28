@@ -7,6 +7,12 @@ provider:
   runtime: go1.x
   stage: dev
   region: eu-central-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:*"
+      Resource:
+        - "*"
 
 package:
   exclude:
@@ -16,8 +22,37 @@ package:
 
 functions:
   hello:
+    name: hello
     handler: bin/hello
     events:
       - http:
           path: hello
           method: get
+  db:
+    name: db
+    handler: bin/db
+    events:
+      - http:
+          path: db
+          method: get
+
+resources:
+  Resources:
+    ExampleDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: name
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: example
